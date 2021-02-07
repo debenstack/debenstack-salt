@@ -117,6 +117,11 @@ websites-conf:
         - user: {{ pillar['nginx']['user'] }}
         - group: {{ pillar['nginx']['group'] }}
         - mode: 755
+        - require:
+            - letsencrypt-conf
+            - ssl-conf
+            - deffie-hellman
+            - acme-challenge
 websites-conf-symlink:
     file.symlink:
         - name: /etc/nginx/sites-enabled/websites.conf
@@ -145,7 +150,7 @@ websites-conf-symlink:
 #        - require:
 #            - certbot.bensoer.com-conf
 
-configdir:
+letsencrypt-config-dir:
   file.directory:
     - name: /etc/letsencrypt/configs
     - makedirs: true
@@ -167,5 +172,5 @@ configdir:
         - context:
             SERVER_NAME : {{ website["host"] }}
         - required:
-            - configdir
+            - letsencrypt-config-dir
 {% endfor %}
