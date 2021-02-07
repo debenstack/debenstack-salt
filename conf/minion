@@ -44,7 +44,7 @@
 # using failover.
 # Setting master_type to 'disable' let's you have a running minion (with engines and
 # beacons) without a master connection
-# master_type: str
+master_type: disable
 
 # Poll interval in seconds for checking if the master is still there.  Only
 # respected if master_type above is "failover". To disable the interval entirely,
@@ -626,7 +626,6 @@ file_roots:
 # The Salt pillar is searched for locally if file_client is set to local. If
 # this is the case, and pillar data is defined, then the pillar_roots need to
 # also be configured on the minion:
-file_client: local
 pillar_roots:
   base:
     - /srv/pillar
