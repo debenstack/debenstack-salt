@@ -1,0 +1,18 @@
+# Domain Name
+domains = {{ SERVER_NAME }}
+
+# Key Size
+rsa-key-size = 4096 # Or 2048
+
+# Lets Encrypt Server Address (at time of writting)
+server = https://acme-v01.api.letsencrypt.org/directory
+
+# Email address to receive renewal reminders
+email = ben@soernet.ca
+
+# Turn off the ncurses UI
+text = True
+
+# Webroot Authentication
+authenticator = webroot
+webroot-path = /var/lib/letsencrypt/

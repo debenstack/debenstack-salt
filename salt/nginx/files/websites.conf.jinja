@@ -1,0 +1,46 @@
+{% for website in pillar.get('websites', []) %}
+
+{% set CERT_PATH = '/etc/letsencrypt/live/' + website["host"] %}
+{% set HAS_SSL = salt['file.directory_exists'](CERT_PATH) %}
+
+server {
+    listen 80;
+    server_name {{website["host"]}} {{website["fullhost"]}};
+
+    # Hit the exact letsencrypt endpoint
+    include snippets/letsencrypt.conf;
+
+    # OR Get rerouted to HTTPS endpoint
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+{% if HAS_SSL %}
+
+server {
+    listen {{website["port"]}} ssl http2;
+    server_name {{website["fullhost"]}};
+
+    access_log logs/{{website["host"]}}.access.log;
+    error_log logs/{{website["host"]}}.error.log;
+
+    ssl_certificate {{ CERT_PATH }}/fullchain.pem;
+    ssl_certificate_key {{ CERT_PATH }}/privkey.pem;
+    ssl_trusted_certificate {{ CERT_PATH }}/chain.pem;
+    
+    include snippets/ssl.conf;
+    include snippets/letsencrypt.conf;
+
+    # Reverse Proxy Forward
+    location / {
+        proxy_pass {{website["forward"]}};
+    }
+
+    # Redirect www Host Name to Short Host Name
+    return 301 https://{{website["host"]}}$request_uri;
+}
+
+{% endif %}
+
+{% endfor %}

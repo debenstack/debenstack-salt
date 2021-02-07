@@ -1,0 +1,6 @@
+server {
+  listen 80;
+  server_name certbot.bensoer.com www.certbot.bensoer.com;
+
+  include snippets/letsencrypt.conf;
+}
