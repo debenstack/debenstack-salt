@@ -194,7 +194,7 @@ letsencrypt-config-dir:
         - template: jinja
         - context:
             SERVER_NAME : {{ website["host"] }}
-        - required:
+        - require:
             - letsencrypt-config-dir
 {% endfor %}
 
