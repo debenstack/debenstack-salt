@@ -19,6 +19,7 @@ nginx:
             - pkg: nginx
             - file: /etc/nginx/nginx.conf
             - file: /etc/nginx/sites-enabled/*
+            - file: /etc/nginx/sites-available/*
             - file: /etc/nginx/streams.d/*
     file.managed:
         - source: salt://nginx/files/nginx.conf.jinja
@@ -108,29 +109,51 @@ ssl-conf:
         - group: {{ pillar['nginx']['group'] }}
         - mode: 755
 
-websites-conf:
+{% for website in pillar.get('websites', []) %}
+{% set CERT_PATH = '/etc/letsencrypt/live/' + website["host"] %}
+{{website["fullhost"]}}-website-conf:
     file.managed:
         - source: salt://nginx/files/websites.conf.jinja
         - template: jinja
         - show_changes: True
-        - name: /etc/nginx/sites-available/websites.conf
+        - name: /etc/nginx/sites-available/{{website["host"]}}.conf
         - user: {{ pillar['nginx']['user'] }}
         - group: {{ pillar['nginx']['group'] }}
         - mode: 755
+        - context:
+            WEBSITE : {{ website }}
+            CERT_PATH : {{ CERT_PATH }}
         - require:
             - letsencrypt-conf
             - ssl-conf
             - deffie-hellman
             - acme-challenge
-websites-conf-symlink:
+{{website["fullhost"]}}-website-conf-symlink:
     file.symlink:
-        - name: /etc/nginx/sites-enabled/websites.conf
-        - target: /etc/nginx/sites-available/websites.conf
+        - name: /etc/nginx/sites-enabled/{{website["host"]}}.conf
+        - target: /etc/nginx/sites-available/{{website["host"]}}.conf
         - user: {{ pillar['nginx']['user'] }}
         - group: {{ pillar['nginx']['group'] }}
         - mode: 755
         - require:
-            - websites-conf
+            - {{website['fullhost']}}-website-conf
+{% if not salt['file.directory_exists'](CERT_PATH) %}
+{{website['fullhost']}}-generate-certs:
+    cmd.run:
+        - name: 'sudo certbot certonly --agree-tos --email "ben@soernet.ca" --webroot -w /var/lib/letsencrypt/ -d {{website["host"]}} -d {{website["fullhost"]}}'
+        - require:
+            - {{website["fullhost"]}}-letsencrypt-config
+        - watch_in:
+            - file: {{website["fullhost"]}}-website-conf
+{% endif %}
+{% endfor %}
+
+# Remove defailt
+nginx-default-site-removed:
+    file.absent:
+        - names:
+            - /etc/nginx/sites-available/default
+            - /etc/nginx/sites-enabled/default
 
 
 #certbot.bensoer.com-conf:
@@ -174,3 +197,4 @@ letsencrypt-config-dir:
         - required:
             - letsencrypt-config-dir
 {% endfor %}
+

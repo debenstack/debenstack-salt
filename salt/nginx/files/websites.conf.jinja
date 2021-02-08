@@ -1,11 +1,9 @@
-{% for website in pillar.get('websites', []) %}
-
-{% set CERT_PATH = '/etc/letsencrypt/live/' + website["host"] %}
 {% set HAS_SSL = salt['file.directory_exists'](CERT_PATH) %}
-
 server {
     listen 80;
-    server_name {{website["host"]}} {{website["fullhost"]}};
+    server_name {{WEBSITE["host"]}} {{WEBSITE["fullhost"]}};
+
+    access_log /var/log/nginx/{{WEBSITE["host"]}}.letsencrypt.access.log combined;
 
     # Hit the exact letsencrypt endpoint
     include snippets/letsencrypt.conf;
@@ -17,13 +15,12 @@ server {
 }
 
 {% if HAS_SSL %}
-
 server {
-    listen {{website["port"]}} ssl http2;
-    server_name {{website["fullhost"]}};
+    listen {{WEBSITE["port"]}} ssl http2;
+    server_name {{WEBSITE["fullhost"]}};
 
-    access_log logs/{{website["host"]}}.access.log;
-    error_log logs/{{website["host"]}}.error.log;
+    access_log logs/{{WEBSITE["host"]}}.access.log;
+    error_log logs/{{WEBSITE["host"]}}.error.log;
 
     ssl_certificate {{ CERT_PATH }}/fullchain.pem;
     ssl_certificate_key {{ CERT_PATH }}/privkey.pem;
@@ -34,13 +31,10 @@ server {
 
     # Reverse Proxy Forward
     location / {
-        proxy_pass {{website["forward"]}};
+        proxy_pass {{WEBSITE["forward"]}};
     }
 
     # Redirect www Host Name to Short Host Name
-    return 301 https://{{website["host"]}}$request_uri;
+    return 301 https://{{WEBSITE["host"]}}$request_uri;
 }
-
 {% endif %}
-
-{% endfor %}
