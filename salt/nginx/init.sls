@@ -17,10 +17,7 @@ nginx:
         - restart: True
         - watch:
             - pkg: nginx
-            - file: /etc/nginx/nginx.conf
-            - file: /etc/nginx/sites-enabled/*
-            - file: /etc/nginx/sites-available/*
-            - file: /etc/nginx/streams.d/*
+            - file: nginx
     file.managed:
         - source: salt://nginx/files/nginx.conf.jinja
         - name: /etc/nginx/nginx.conf
@@ -49,6 +46,8 @@ stream-udp-{{udpstream["port"]}}:
         - group: {{ pillar['nginx']['group'] }}
         - mode: 755
         - template: jinja
+        - watch_in:
+            - service: nginx
         - context:
             PORT : {{ udpstream["port"] }}
             FORWARD : {{ udpstream["forward"] }}
@@ -65,6 +64,8 @@ stream-tcp-{{tcpstream["port"]}}:
         - group: {{ pillar['nginx']['group'] }}
         - mode: 755
         - template: jinja
+        - watch_in:
+            - service: nginx
         - context:
             PORT: {{ tcpstream["port"] }}
             FORWARD: {{ tcpstream["forward"] }}
@@ -123,6 +124,8 @@ ssl-conf:
         - context:
             WEBSITE : {{ website }}
             CERT_PATH : {{ CERT_PATH }}
+        - watch_in:
+            - service: nginx
         - require:
             - letsencrypt-conf
             - ssl-conf
@@ -154,6 +157,8 @@ nginx-default-site-removed:
         - names:
             - /etc/nginx/sites-available/default
             - /etc/nginx/sites-enabled/default
+        - require:
+            - pkg: nginx
 
 
 #certbot.bensoer.com-conf:
@@ -198,3 +203,9 @@ letsencrypt-config-dir:
             - letsencrypt-config-dir
 {% endfor %}
 
+letencrypt-renew-nginx-restart:
+    file.append:
+        - name: /etc/letsencrypt/cli.ini
+        - text: 'deploy-hook = systemctl reload nginx'
+        - require:
+            - packages-installed
