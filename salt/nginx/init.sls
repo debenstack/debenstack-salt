@@ -18,6 +18,8 @@ nginx:
         - watch:
             - pkg: nginx
             - file: nginx
+            - file: /etc/nginx/sites-available/*
+            - file: /etc/nginx/sites-enabled/*
     file.managed:
         - source: salt://nginx/files/nginx.conf.jinja
         - name: /etc/nginx/nginx.conf
@@ -140,15 +142,9 @@ ssl-conf:
         - mode: 755
         - require:
             - {{website['fullhost']}}-website-conf
-{% if not salt['file.directory_exists'](CERT_PATH) %}
-{{website['fullhost']}}-generate-certs:
-    cmd.run:
-        - name: 'sudo certbot certonly --agree-tos --email "ben@soernet.ca" --webroot -w /var/lib/letsencrypt/ -d {{website["host"]}} -d {{website["fullhost"]}}'
-        - require:
-            - {{website["fullhost"]}}-letsencrypt-config
-        - watch_in:
-            - file: {{website["fullhost"]}}-website-conf
-{% endif %}
+
+
+
 {% endfor %}
 
 # Remove defailt
@@ -209,3 +205,37 @@ letencrypt-renew-nginx-restart:
         - text: 'deploy-hook = systemctl reload nginx'
         - require:
             - packages-installed
+
+{% for website in pillar.get('websites', []) %}
+{% set CERT_PATH = '/etc/letsencrypt/live/' + website["host"] %}
+{% if not salt['file.directory_exists'](CERT_PATH) %}
+{{website['fullhost']}}-generate-certs:
+    cmd.run:
+        - name: 'sudo certbot certonly --agree-tos --email "ben@soernet.ca" --webroot -w /var/lib/letsencrypt/ -d {{website["host"]}} -d {{website["fullhost"]}}'
+        - require:
+            - {{website["fullhost"]}}-letsencrypt-config
+
+# maybe will work as a post-hook ?
+{{website["fullhost"]}}-website-conf-rebuild:
+    file.managed:
+        - source: salt://nginx/files/websites.conf.jinja
+        - template: jinja
+        - show_changes: True
+        - name: /etc/nginx/sites-available/{{website["host"]}}.conf
+        - user: {{ pillar['nginx']['user'] }}
+        - group: {{ pillar['nginx']['group'] }}
+        - mode: 755
+        - context:
+            WEBSITE : {{ website }}
+            CERT_PATH : {{ CERT_PATH }}
+        - onchanges:
+            - cmd: {{website['fullhost']}}-generate-certs
+        - watch_in:
+            - service: nginx
+        - require:
+            - letsencrypt-conf
+            - ssl-conf
+            - deffie-hellman
+            - acme-challenge
+{% endif %}
+{% endfor %}
