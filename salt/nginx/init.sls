@@ -214,6 +214,9 @@ letencrypt-renew-nginx-restart:
         - name: 'sudo certbot certonly --agree-tos --email "ben@soernet.ca" --webroot -w /var/lib/letsencrypt/ -d {{website["host"]}} -d {{website["fullhost"]}}'
         - require:
             - {{website["fullhost"]}}-letsencrypt-config
+            - {{website["fullhost"]}}-website-conf
+            - {{website["fullhost"]}}-website-conf-symlink
+
 
 # maybe will work as a post-hook ?
 {{website["fullhost"]}}-website-conf-rebuild:
@@ -230,8 +233,8 @@ letencrypt-renew-nginx-restart:
             CERT_PATH : {{ CERT_PATH }}
         - onchanges:
             - cmd: {{website['fullhost']}}-generate-certs
-        - watch_in:
-            - service: nginx
+#        - watch_in:
+#            - service: nginx
         - require:
             - letsencrypt-conf
             - ssl-conf
