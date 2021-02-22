@@ -127,8 +127,8 @@ ssl-conf:
         - context:
             WEBSITE : {{ website }}
             CERT_PATH : {{ CERT_PATH }}
-        - watch_in:
-            - service: nginx
+#        - watch_in:
+#            - service: nginx
         - require:
             - letsencrypt-conf
             - ssl-conf
