@@ -15,6 +15,7 @@ nginx:
             - streams-dir
         - name: nginx
         - restart: True
+        - enabled: True
         - watch:
             - pkg: nginx
             - file: nginx
