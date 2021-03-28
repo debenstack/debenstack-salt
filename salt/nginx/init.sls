@@ -165,13 +165,14 @@ letsencrypt-config-dir:
             - letsencrypt-config-dir
 {% endfor %}
 
-
 letencrypt-renew-nginx-restart:
     file.append:
         - name: /etc/letsencrypt/cli.ini
         - text: 'deploy-hook = systemctl reload nginx'
         - require:
             - packages-installed
+
+
 
 # 1) Generate the initial configurations
 {% for website in pillar.get('websites', []) %}
