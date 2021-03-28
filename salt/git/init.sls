@@ -22,7 +22,7 @@ debenstack-cloned:
     git.cloned:
         - name: https://github.com/debenstack/debenstack.git
         - user: root
-        - target: /respos/debenstack
+        - target: /repos/debenstack
         - https_user: {{ GITHUB_USERNAME }}
         - https_pass: {{ GITHUB_TOKEN }}
         - require:
@@ -33,7 +33,7 @@ debenstack-lib-cloned:
     git.cloned:
         - name: https://github.com/debenstack/debenstack-lib.git
         - user: root
-        - target: /respos/debenstack-lib
+        - target: /repos/debenstack-lib
         - https_user: {{ GITHUB_USERNAME }}
         - https_pass: {{ GITHUB_TOKEN }}
         - require:
