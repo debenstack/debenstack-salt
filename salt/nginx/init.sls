@@ -214,8 +214,6 @@ letencrypt-renew-nginx-restart:
 restart-nginx:
     cmd.run:
         - name: 'sudo systecmtl restart nginx'
-        - require:
-            - nginx-running
 
 
 # 3) Make certbot Calls
