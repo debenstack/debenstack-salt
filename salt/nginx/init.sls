@@ -70,7 +70,7 @@ stream-udp-{{udpstream["port"]}}:
         - context:
             PORT : {{ udpstream["port"] }}
             FORWARD : {{ udpstream["forward"] }}
-        - required:
+        - require:
             - streams-dir
 {% endfor %}
 
@@ -88,7 +88,7 @@ stream-tcp-{{tcpstream["port"]}}:
         - context:
             PORT: {{ tcpstream["port"] }}
             FORWARD: {{ tcpstream["forward"] }}
-        - required:
+        - require:
             - streams-dir
 {% endfor %}
 
@@ -244,6 +244,5 @@ letencrypt-renew-nginx-restart:
             - ssl-conf
             - deffie-hellman
             - acme-challenge
-            - nginx-running
 {% endif %}
 {% endfor %}
