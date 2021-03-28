@@ -1,6 +1,7 @@
 
 include:
   - nginx
+  - git
 
 uptodate:
   pkg.uptodate:
