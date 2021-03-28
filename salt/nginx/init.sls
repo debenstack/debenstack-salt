@@ -6,27 +6,43 @@ packages-installed:
             - certbot
             - openssl
 
-nginx:
+nginx-installed:
     pkg.installed:
         - name: nginx
-    service.running:
         - require:
             - packages-installed
-            - streams-dir
+
+nginx-running:
+    service.running:
         - name: nginx
         - restart: True
         - enabled: True
+        - reload: True
         - watch:
-            - pkg: nginx
-            - file: nginx
+            - pkg: nginx-installed
+            - file: nginx-conf
             - file: /etc/nginx/sites-available/*
             - file: /etc/nginx/sites-enabled/*
+        - require:
+            - nginx-enabled
+            - nginx-installed
+            - nginx-conf
+nginx-conf:
     file.managed:
         - source: salt://nginx/files/nginx.conf.jinja
         - name: /etc/nginx/nginx.conf
         - user: {{ pillar['nginx']['user'] }}
         - group: {{ pillar['nginx']['group'] }}
         - mode: 755
+
+nginx-enabled:
+    service.enabled:
+        - name: nginx
+        - require:
+            - nginx-installed
+            - nginx-running
+            - nginx-conf
+
 
 streams-dir:
     file.directory:
@@ -49,8 +65,8 @@ stream-udp-{{udpstream["port"]}}:
         - group: {{ pillar['nginx']['group'] }}
         - mode: 755
         - template: jinja
-        - watch_in:
-            - service: nginx
+        - require_in:
+            - nginx-running
         - context:
             PORT : {{ udpstream["port"] }}
             FORWARD : {{ udpstream["forward"] }}
@@ -67,8 +83,8 @@ stream-tcp-{{tcpstream["port"]}}:
         - group: {{ pillar['nginx']['group'] }}
         - mode: 755
         - template: jinja
-        - watch_in:
-            - service: nginx
+        - require_in:
+            - nginx-running
         - context:
             PORT: {{ tcpstream["port"] }}
             FORWARD: {{ tcpstream["forward"] }}
@@ -113,67 +129,17 @@ ssl-conf:
         - group: {{ pillar['nginx']['group'] }}
         - mode: 755
 
-{% for website in pillar.get('websites', []) %}
-{% set CERT_PATH = '/etc/letsencrypt/live/' + website["host"] %}
-{{website["fullhost"]}}-website-conf:
-    file.managed:
-        - source: salt://nginx/files/websites.conf.jinja
-        - template: jinja
-        - show_changes: True
-        - name: /etc/nginx/sites-available/{{website["host"]}}.conf
-        - user: {{ pillar['nginx']['user'] }}
-        - group: {{ pillar['nginx']['group'] }}
-        - mode: 755
-        - context:
-            WEBSITE : {{ website }}
-            CERT_PATH : {{ CERT_PATH }}
-#        - watch_in:
-#            - service: nginx
-        - require:
-            - letsencrypt-conf
-            - ssl-conf
-            - deffie-hellman
-            - acme-challenge
-{{website["fullhost"]}}-website-conf-symlink:
-    file.symlink:
-        - name: /etc/nginx/sites-enabled/{{website["host"]}}.conf
-        - target: /etc/nginx/sites-available/{{website["host"]}}.conf
-        - user: {{ pillar['nginx']['user'] }}
-        - group: {{ pillar['nginx']['group'] }}
-        - mode: 755
-        - require:
-            - {{website['fullhost']}}-website-conf
 
 
-
-{% endfor %}
-
-# Remove defailt
+# Remove default page
 nginx-default-site-removed:
     file.absent:
         - names:
             - /etc/nginx/sites-available/default
             - /etc/nginx/sites-enabled/default
         - require:
-            - pkg: nginx
+            - pkg: nginx-installed
 
-
-#certbot.bensoer.com-conf:
-#    file.managed:
-#        - source: salt://nginx/files/certbot.bensoer.com.conf.jinja
-#        - name: /etc/nginx/sites-available/certbot.bensoer.com.conf
-#        - user: www-data
-#        - group: www-data
-#        - mode: 755
-#certbot.bensoer.com-symlink:
-#    file.symlink:
-#        - name: /etc/nginx/sites-enabled/certbot.bensoer.com.conf
-#        - target: /etc/nginx/sites-available/certbot.bensoer.com.conf
-#        - user: www-data
-#        - group: www-data
-#        - mode: 755
-#        - require:
-#            - certbot.bensoer.com-conf
 
 letsencrypt-config-dir:
   file.directory:
@@ -188,7 +154,6 @@ letsencrypt-config-dir:
         - group
 
 {% for website in pillar.get('websites', []) %}
-
 {{website["fullhost"]}}-letsencrypt-config:
     file.managed:
         - name: /etc/letsencrypt/configs/{{website["host"]}}.conf
@@ -200,6 +165,7 @@ letsencrypt-config-dir:
             - letsencrypt-config-dir
 {% endfor %}
 
+
 letencrypt-renew-nginx-restart:
     file.append:
         - name: /etc/letsencrypt/cli.ini
@@ -207,6 +173,45 @@ letencrypt-renew-nginx-restart:
         - require:
             - packages-installed
 
+# 1) Generate the initial configurations
+{% for website in pillar.get('websites', []) %}
+{% set CERT_PATH = '/etc/letsencrypt/live/' + website["host"] %}
+{{website["fullhost"]}}-website-conf:
+    file.managed:
+        - source: salt://nginx/files/websites.conf.jinja
+        - template: jinja
+        - show_changes: True
+        - name: /etc/nginx/sites-available/{{website["host"]}}.conf
+        - user: {{ pillar['nginx']['user'] }}
+        - group: {{ pillar['nginx']['group'] }}
+        - mode: 755
+        - context:
+            WEBSITE : {{ website }}
+            CERT_PATH : {{ CERT_PATH }}
+        - require_in:
+            - nginx-running
+        - require:
+            - letsencrypt-conf
+            - ssl-conf
+            - deffie-hellman
+            - acme-challenge
+{{website["fullhost"]}}-website-conf-symlink:
+    file.symlink:
+        - name: /etc/nginx/sites-enabled/{{website["host"]}}.conf
+        - target: /etc/nginx/sites-available/{{website["host"]}}.conf
+        - user: {{ pillar['nginx']['user'] }}
+        - group: {{ pillar['nginx']['group'] }}
+        - mode: 755
+        - require_in:
+            - nginx-running
+        - require:
+            - {{website['fullhost']}}-website-conf
+{% endfor %}
+
+# 2) Restart Nginx
+
+
+# 3) Make certbot Calls
 {% for website in pillar.get('websites', []) %}
 {% set CERT_PATH = '/etc/letsencrypt/live/' + website["host"] %}
 {% if not salt['file.directory_exists'](CERT_PATH) %}
@@ -217,9 +222,10 @@ letencrypt-renew-nginx-restart:
             - {{website["fullhost"]}}-letsencrypt-config
             - {{website["fullhost"]}}-website-conf
             - {{website["fullhost"]}}-website-conf-symlink
+            - nginx-running
 
 
-# maybe will work as a post-hook ?
+# 4) Regenerate the configurations
 {{website["fullhost"]}}-website-conf-rebuild:
     file.managed:
         - source: salt://nginx/files/websites.conf.jinja
@@ -232,14 +238,12 @@ letencrypt-renew-nginx-restart:
         - context:
             WEBSITE : {{ website }}
             CERT_PATH : {{ CERT_PATH }}
-        - onchanges:
-            - cmd: {{website['fullhost']}}-generate-certs
-#        - watch_in:
-#            - service: nginx
         - require:
+            - {{website['fullhost']}}-generate-certs
             - letsencrypt-conf
             - ssl-conf
             - deffie-hellman
             - acme-challenge
+            - nginx-running
 {% endif %}
 {% endfor %}
