@@ -23,8 +23,8 @@ debenstack-cloned:
         - name: https://github.com/debenstack/debenstack.git
         - user: root
         - target: /respos/debenstack
-        - http_user: {{ GITHUB_USERNAME }}
-        - http_password: {{ GITHUB_TOKEN }}
+        - https_user: {{ GITHUB_USERNAME }}
+        - https_pass: {{ GITHUB_TOKEN }}
         - require:
             - repos-directory
             - git-installed
@@ -34,8 +34,8 @@ debenstack-lib-cloned:
         - name: https://github.com/debenstack/debenstack-lib.git
         - user: root
         - target: /respos/debenstack-lib
-        - http_user: {{ GITHUB_USERNAME }}
-        - http_password: {{ GITHUB_TOKEN }}
+        - https_user: {{ GITHUB_USERNAME }}
+        - https_pass: {{ GITHUB_TOKEN }}
         - require:
             - repos-directory
             - git-installed
