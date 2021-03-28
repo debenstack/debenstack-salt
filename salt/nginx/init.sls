@@ -222,8 +222,6 @@ letencrypt-renew-nginx-restart:
             - {{website["fullhost"]}}-letsencrypt-config
             - {{website["fullhost"]}}-website-conf
             - {{website["fullhost"]}}-website-conf-symlink
-            - nginx-running
-
 
 # 4) Regenerate the configurations
 {{website["fullhost"]}}-website-conf-rebuild:
