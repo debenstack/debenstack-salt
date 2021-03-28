@@ -2,6 +2,7 @@
 include:
   - nginx
   - git
+  - debenstack
 
 uptodate:
   pkg.uptodate:
