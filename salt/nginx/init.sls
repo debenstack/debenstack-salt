@@ -214,7 +214,9 @@ letencrypt-renew-nginx-restart:
 restart-nginx:
     cmd.run:
         - name: 'sudo systemctl restart nginx'
-
+        - require:
+            - nginx-default-site-removed
+            - nginx-conf
 
 # 3) Make certbot Calls
 {% for website in pillar.get('websites', []) %}
