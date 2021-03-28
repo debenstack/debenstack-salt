@@ -190,6 +190,7 @@ letencrypt-renew-nginx-restart:
             CERT_PATH : {{ CERT_PATH }}
         - require_in:
             - nginx-running
+            - restart-nginx
         - require:
             - letsencrypt-conf
             - ssl-conf
@@ -204,11 +205,17 @@ letencrypt-renew-nginx-restart:
         - mode: 755
         - require_in:
             - nginx-running
+            - restart-nginx
         - require:
             - {{website['fullhost']}}-website-conf
 {% endfor %}
 
 # 2) Restart Nginx
+restart-nginx:
+    cmd.run:
+        - name: 'sudo systecmtl restart nginx'
+        - require:
+            - nginx-running
 
 
 # 3) Make certbot Calls
@@ -222,6 +229,7 @@ letencrypt-renew-nginx-restart:
             - {{website["fullhost"]}}-letsencrypt-config
             - {{website["fullhost"]}}-website-conf
             - {{website["fullhost"]}}-website-conf-symlink
+            - restart-nginx
 
 # 4) Regenerate the configurations
 {{website["fullhost"]}}-website-conf-rebuild:
@@ -242,5 +250,6 @@ letencrypt-renew-nginx-restart:
             - ssl-conf
             - deffie-hellman
             - acme-challenge
+            - restart-nginx
 {% endif %}
 {% endfor %}
