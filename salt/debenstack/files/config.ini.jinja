@@ -1,0 +1,12 @@
+[folders]
+{% for key, value in pillar['debenstack']['folders'].items() %}
+{{key}}={{value}}
+
+[configs]
+names={% pillar['debenstack']['mainconfig']['names'].join(',') %}
+maintenance={% pillar['debenstack']['mainconfig']['maintenance'] %}
+
+{% for configName, attributes in pillar['debenstack']['subconfig'].items() %}
+[{{config['name']}}]
+{% for key, value in attributes.items() %}
+{{key}}={{value}}

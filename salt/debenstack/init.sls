@@ -1,3 +1,7 @@
+
+include:
+    - git
+
 dependencies-installed:
     pkg.installed:
         - pkgs:
@@ -29,17 +33,29 @@ install-docker-compose:
     cmd.run:
         - name: 'sudo curl -L "https://github.com/docker/compose/releases/download/1.28.6/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose && sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose'
 
+
 pip-dependencies-installed:
     cmd.run:
         - name: 'sudo cp /repos/debenstack && python3 -m pip install -r ./requirements.txt'
         - require:
             - dependencies-installed
 
+generate-debenstack-config:
+    file.managed:
+        - source: salt://debenstack/files/config.ini.jinja
+        - name: /repos/debenstack/config.ini
+        - user: root
+        - group: root
+        - mode: 755
+
+
 # Start the bootup and setup of debenstack
 initiate-debenstack:
     cmd.run:
-        - name: 'sudo cp /repos/debenstack && ./startup.sh'
+        - name: 'sudo cd /repos/debenstack && ./startup.sh'
         - require:
             - pip-dependencies-installed
             - install-docker
             - install-docker-compose
+            - generate-debenstack-config
+            - sls: git
