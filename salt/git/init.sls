@@ -1,5 +1,5 @@
 {% set GITHUB_TOKEN = grains['githubtoken'] %}
-{% set GITHUB_USERNAME = pillar['git']['username'] %}
+{% set GITHUB_USERNAME = grains['githubusername'] %}
 
 
 

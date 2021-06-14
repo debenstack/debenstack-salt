@@ -36,7 +36,7 @@ install-docker-compose:
 
 pip-dependencies-installed:
     cmd.run:
-        - name: 'sudo cp /repos/debenstack && python3 -m pip install -r ./requirements.txt'
+        - name: 'sudo cd /repos/debenstack && python3 -m pip install -r ./requirements.txt'
         - require:
             - dependencies-installed
 

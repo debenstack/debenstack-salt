@@ -1,2 +1,2 @@
 git:
-    username: bensoer
+    username: obsolete
