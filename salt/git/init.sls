@@ -1,5 +1,5 @@
-{% set GITHUB_TOKEN = grains['githubtoken'] %}
-{% set GITHUB_USERNAME = grains['githubusername'] %}
+{% set GITHUB_TOKEN = salt['config.get']('githubtoken') %}
+{% set GITHUB_USERNAME = salt['config.get']('githubusername') %}
 
 
 
