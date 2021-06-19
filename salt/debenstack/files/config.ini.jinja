@@ -10,3 +10,7 @@ maintenance={% pillar['debenstack']['mainconfig']['maintenance'] %}
 [{{config['name']}}]
 {% for key, value in attributes.items() %}
 {{key}}={{value}}
+
+[aws]
+    AWS_ACCESS_KEY_ID={% salt['config.get']('awsaccesskeyid') %}
+    AWS_SECRET_ACCESS_KEY={% salt['config.get']('awssecretaccesskey') %}
