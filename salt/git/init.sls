@@ -42,12 +42,6 @@ debenstack-lib-cloned:
             - repos-directory
             - git-installed
 
-debenstack-lib-installed:
-    cmd.run:
-        - name: python3 /repos/debenstack-lib/setup.py install
-        - require:
-            - debenstack-lib-cloned
-
 debenstack-requirements-installed:
     cmd.run:
         - name: python3 -m pip install -f /repos/debenstack/requirements.txt

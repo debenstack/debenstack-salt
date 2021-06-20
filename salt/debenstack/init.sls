@@ -48,6 +48,11 @@ generate-debenstack-config:
         - group: root
         - mode: 755
 
+debenstack-lib-installed:
+    cmd.run:
+        - name: python3 /repos/debenstack-lib/setup.py install
+        - require:
+            - git.debenstack-lib-cloned
 
 # Start the bootup and setup of debenstack
 initiate-debenstack:
@@ -58,4 +63,5 @@ initiate-debenstack:
             - install-docker
             - install-docker-compose
             - generate-debenstack-config
+            - debenstack-lib-installed
             - sls: git
