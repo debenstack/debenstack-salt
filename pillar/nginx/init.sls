@@ -31,6 +31,10 @@ websites:
       fullhost: www.bnlnkd.me
       port: 443
       forward: http://127.0.0.1:5000
+    - host: webapp.bnlnkd.me
+      fullhost: www.webapp.bnlnkd.me
+      port: 443
+      forward: http://127.0.0.1:5500
 tcp:
     - port: 5055
       forward: 127.0.0.1:5055
