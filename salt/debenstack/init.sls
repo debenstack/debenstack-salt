@@ -23,9 +23,10 @@ docker-pkgrepo:
 
 install-docker:
     pkg.installed:
-        - name: docker-ce
-        - version: {{ pillar['docker']['ce']['version'] }}
-        - fromrepo: docker
+        - pkgs:
+            - docker-ce: {{ pillar['docker']['ce']['version'] }}
+            - docker-ce-cli: {{ pillar['docker']['ce-cli']['version'] }}
+            - containerd.io: {{ pillar['docker']['containerdio']['version'] }}
         - refresh: True
         - require:
             - docker-pkgrepo
@@ -37,7 +38,7 @@ install-docker-compose:
 
 debenstack-requirements-installed:
     cmd.run:
-        - name: python3 -m pip install -f /repos/debenstack/requirements.txt
+        - name: python3 -m pip install -r /repos/debenstack/requirements.txt
         - require:
             - sls: git
             - dependencies-installed
@@ -52,7 +53,8 @@ generate-debenstack-config:
 
 debenstack-lib-installed:
     cmd.run:
-        - name: python3 /repos/debenstack-lib/setup.py install
+        - name: python3 ./setup.py install
+        - cwd: /repos/debenstack-lib
         - require:
             - sls: git
 
@@ -61,7 +63,7 @@ initiate-debenstack:
     cmd.run:
         - name: 'sudo cd /repos/debenstack && ./startup.sh'
         - require:
-            - pip-dependencies-installed
+            - debenstack-requirements-installed
             - install-docker
             - install-docker-compose
             - generate-debenstack-config
