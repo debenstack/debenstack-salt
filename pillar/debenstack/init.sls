@@ -1,4 +1,10 @@
 
+docker:
+    ce:
+        version: 17.12.0~ce-0~debian
+    compose:
+        version: 1.28.6
+
 debenstack:
     folders:
         - backups: /repos/debenstack-backups

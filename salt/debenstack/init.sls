@@ -17,12 +17,13 @@ docker-pkgrepo:
         - humanname: docker
         - name: deb [arch=amd64] https://download.docker.com/linux/debian buster stable
         - file: /etc/apt/sources.list.d/docker.list
-        - gpgkey: https://download.docker.com/linux/debian/gpg
+        - gpgkey: salt://debenstack/files/docker-archive-keyring.gpg
         - gpgcheck: 1
 
 install-docker:
     pkg.installed:
         - name: docker-ce
+        - version: {{ pillar['docker']['ce']['version'] }}
         - fromrepo: docker
         - refresh: True
         - require:
@@ -31,13 +32,13 @@ install-docker:
 
 install-docker-compose:
     cmd.run:
-        - name: 'sudo curl -L "https://github.com/docker/compose/releases/download/1.28.6/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose && sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose'
+        - name: 'sudo curl -L "https://github.com/docker/compose/releases/download/{{ pillar['docker']['compose']['version'] }}/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose && sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose'
 
-
-pip-dependencies-installed:
+debenstack-requirements-installed:
     cmd.run:
-        - name: 'sudo cd /repos/debenstack && python3 -m pip install -r ./requirements.txt'
+        - name: python3 -m pip install -f /repos/debenstack/requirements.txt
         - require:
+            - sls: git.debenstack-cloned
             - dependencies-installed
 
 generate-debenstack-config:
@@ -52,7 +53,7 @@ debenstack-lib-installed:
     cmd.run:
         - name: python3 /repos/debenstack-lib/setup.py install
         - require:
-            - git.debenstack-lib-cloned
+            - sls: git.debenstack-lib-cloned
 
 # Start the bootup and setup of debenstack
 initiate-debenstack:
