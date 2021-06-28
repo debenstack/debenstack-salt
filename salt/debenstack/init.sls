@@ -34,7 +34,8 @@ debenstack-lib-installed:
 # Start the bootup and setup of debenstack
 initiate-debenstack:
     cmd.run:
-        - name: 'sudo cd /repos/debenstack && ./startup.sh'
+        - name: 'sudo ./startup.sh'
+        - cwd: /repos/debenstack
         - require:
             - debenstack-requirements-installed
             - generate-debenstack-config
