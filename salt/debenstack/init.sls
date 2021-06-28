@@ -20,6 +20,7 @@ generate-debenstack-config:
     file.managed:
         - source: salt://debenstack/files/config.ini.jinja
         - name: /repos/debenstack/config.ini
+        - template: jinja
         - user: root
         - group: root
         - mode: 755
