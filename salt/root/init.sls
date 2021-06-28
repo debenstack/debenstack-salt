@@ -2,6 +2,7 @@
 include:
   - nginx
   - git
+  - docker
   - debenstack
 
 uptodate:
