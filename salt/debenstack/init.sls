@@ -5,8 +5,8 @@ include:
 dependencies-installed:
     pkg.installed:
         - pkgs:
-            - apt-transport-https 
-            - ca-certificates 
+            - apt-transport-https
+            - ca-certificates
             - curl 
             - gnupg2 
             - software-properties-common
