@@ -1,6 +1,7 @@
 [folders]
 {% for key, value in pillar['debenstack']['folders'].items() %}
 {{key}}={{value}}
+{% endfor %}
 
 [configs]
 names={% pillar['debenstack']['mainconfig']['names'].join(',') %}
@@ -10,6 +11,8 @@ maintenance={% pillar['debenstack']['mainconfig']['maintenance'] %}
 [{{config['name']}}]
 {% for key, value in attributes.items() %}
 {{key}}={{value}}
+{% endfor %}
+{% endfor %}
 
 [aws]
     AWS_ACCESS_KEY_ID={% grains['awsaccesskeyid'] %}
