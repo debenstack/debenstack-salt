@@ -17,7 +17,8 @@ docker-pkgrepo:
         - humanname: docker
         - name: deb [arch=amd64] https://download.docker.com/linux/debian buster stable
         - file: /etc/apt/sources.list.d/docker.list
-        - gpgkey: salt://debenstack/files/docker-archive-keyring.gpg
+        - key_url: https://download.docker.com/linux/debian/gpg
+        - clean_file: True
         - gpgcheck: 1
 
 install-docker:
@@ -38,7 +39,7 @@ debenstack-requirements-installed:
     cmd.run:
         - name: python3 -m pip install -f /repos/debenstack/requirements.txt
         - require:
-            - sls: git.debenstack-cloned
+            - sls: git
             - dependencies-installed
 
 generate-debenstack-config:
@@ -53,7 +54,7 @@ debenstack-lib-installed:
     cmd.run:
         - name: python3 /repos/debenstack-lib/setup.py install
         - require:
-            - sls: git.debenstack-lib-cloned
+            - sls: git
 
 # Start the bootup and setup of debenstack
 initiate-debenstack:
