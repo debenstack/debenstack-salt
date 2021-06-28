@@ -20,9 +20,9 @@ docker-pkgrepo:
 install-docker:
     pkg.installed:
         - pkgs:
-            - docker-ce: {{ pillar['docker']['ce']['version'] }}
-            - docker-ce-cli: {{ pillar['docker']['ce-cli']['version'] }}
-            - containerd.io: {{ pillar['docker']['containerdio']['version'] }}
+            - docker-ce
+            - docker-ce-cli
+            - containerd.io
         - refresh: True
         - require:
             - docker-pkgrepo
