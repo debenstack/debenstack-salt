@@ -4,8 +4,8 @@
 {% endfor %}
 
 [configs]
-names={% pillar['debenstack']['mainconfig']['names'].join(',') %}
-maintenance={% pillar['debenstack']['mainconfig']['maintenance'] %}
+names={{ pillar['debenstack']['mainconfig']['names'].join(',') }}
+maintenance={{ pillar['debenstack']['mainconfig']['maintenance'] }}
 
 {% for configName, attributes in pillar['debenstack']['subconfig'].items() %}
 [{{config['name']}}]
@@ -15,5 +15,5 @@ maintenance={% pillar['debenstack']['mainconfig']['maintenance'] %}
 {% endfor %}
 
 [aws]
-    AWS_ACCESS_KEY_ID={% grains['awsaccesskeyid'] %}
-    AWS_SECRET_ACCESS_KEY={% grains['awssecretaccesskey'] %}
+    AWS_ACCESS_KEY_ID={{ grains['awsaccesskeyid'] }}
+    AWS_SECRET_ACCESS_KEY={{ grains['awssecretaccesskey'] }}
