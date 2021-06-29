@@ -1,10 +1,10 @@
 debenstack:
     folders:
-        - backups: /repos/debenstack-backups
-        - dockerconf: ./dockerconf
-        - generated: ./generated
-        - lib: /repos/debenstack-lib
-        - debenstack: /repos/debenstack
+        backups: /repos/debenstack-backups
+        dockerconf: ./dockerconf
+        generated: ./generated
+        lib: /repos/debenstack-lib
+        debenstack: /repos/debenstack
     mainconfig:
         names:
             - wiki
