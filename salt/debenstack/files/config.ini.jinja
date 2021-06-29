@@ -4,7 +4,7 @@
 {% endfor %}
 
 [configs]
-names={{ pillar['debenstack']['mainconfig']['names'].join(',') }}
+names={{ pillar['debenstack']['mainconfig']['names'] | join(',') }}
 maintenance={{ pillar['debenstack']['mainconfig']['maintenance'] }}
 
 {% for configName, attributes in pillar['debenstack']['subconfig'].items() %}
