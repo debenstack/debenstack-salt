@@ -1,4 +1,4 @@
 server {
-    listen {{ PORT }};
+    listen {{ ADDRESS }}:{{ PORT }};
     proxy_pass {{ FORWARD }};
 }

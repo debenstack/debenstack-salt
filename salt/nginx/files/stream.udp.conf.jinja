@@ -1,4 +1,4 @@
 server {
-    listen {{ PORT }} udp;
+    listen {{ ADDRESS }}:{{ PORT }} udp;
     proxy_pass {{ FORWARD }};
 }

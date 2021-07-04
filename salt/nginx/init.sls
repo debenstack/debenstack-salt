@@ -70,6 +70,7 @@ stream-udp-{{udpstream["port"]}}:
         - context:
             PORT : {{ udpstream["port"] }}
             FORWARD : {{ udpstream["forward"] }}
+            ADDRESS: {{ salt['network.ip_addrs']('eth0', type='public')[0] }}
         - require:
             - streams-dir
 {% endfor %}
@@ -88,6 +89,7 @@ stream-tcp-{{tcpstream["port"]}}:
         - context:
             PORT: {{ tcpstream["port"] }}
             FORWARD: {{ tcpstream["forward"] }}
+            ADDRESS: {{ salt['network.ip_addrs']('eth0', type='public')[0] }}
         - require:
             - streams-dir
 {% endfor %}
