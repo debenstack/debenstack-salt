@@ -19,8 +19,8 @@ server {
     listen {{WEBSITE["port"]}} ssl http2;
     server_name {{WEBSITE["fullhost"]}};
 
-    access_log logs/{{WEBSITE["host"]}}.access.log;
-    error_log logs/{{WEBSITE["host"]}}.error.log;
+    access_log /var/log/{{WEBSITE["host"]}}.access.log;
+    error_log /var/log/{{WEBSITE["host"]}}.error.log;
 
     ssl_certificate {{ CERT_PATH }}/fullchain.pem;
     ssl_certificate_key {{ CERT_PATH }}/privkey.pem;
