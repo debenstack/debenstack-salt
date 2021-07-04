@@ -24,7 +24,6 @@ nginx-running:
             - file: /etc/nginx/sites-available/*
             - file: /etc/nginx/sites-enabled/*
         - require:
-            - nginx-enabled
             - nginx-installed
             - nginx-conf
 nginx-conf:
