@@ -5,6 +5,7 @@ debenstack:
         generated: ./generated
         lib: /repos/debenstack-lib
         debenstack: /repos/debenstack
+    # Specifies which configs below to setup
     mainconfig:
         names:
             - wiki
@@ -12,6 +13,7 @@ debenstack:
             - techblog
             - lychee
             - profile
+            - traccar
         maintenance: maintenance
     subconfig:
         maintenance:
