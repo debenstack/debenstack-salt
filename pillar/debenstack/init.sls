@@ -59,5 +59,13 @@ debenstack:
             restoremethod: local
             serialiser: ProfileSerialiser
             defaults: profile
+        traccar:
+            database: traccar
+            username: traccar_user
+            backups: traccar
+            generated: traccar
+            restoremethod: local
+            serialiser: TraccarSerialiser
+            defaults: traccar
           
     
