@@ -226,7 +226,7 @@ restart-nginx:
 {% if not salt['file.directory_exists'](CERT_PATH) %}
 {{website['fullhost']}}-generate-certs:
     cmd.run:
-        - name: 'sudo certbot certonly --agree-tos --email "ben@soernet.ca" --webroot -w /var/lib/letsencrypt/ -d {{website["host"]}} -d {{website["fullhost"]}}'
+        - name: 'sudo certbot certonly --non-interactive --agree-tos --email "ben@soernet.ca" --webroot -w /var/lib/letsencrypt/ -d {{website["host"]}} -d {{website["fullhost"]}}'
         - creates: 
             - {{ CERT_PATH }}/chain.pem
             - {{ CERT_PATH }}/fullchain.pem
