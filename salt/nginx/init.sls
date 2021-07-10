@@ -228,10 +228,10 @@ restart-nginx:
     cmd.run:
         - name: 'sudo certbot certonly --agree-tos --email "ben@soernet.ca" --webroot -w /var/lib/letsencrypt/ -d {{website["host"]}} -d {{website["fullhost"]}}'
         - creates: 
-            - /var/lib/letsencrypt/live/{{website["host"]}}/cert.pem
-            - /var/lib/letsencrypt/live/{{website["host"]}}/chain.pem
-            - /var/lib/letsencrypt/live/{{website["host"]}}/fullchain.pem
-            - /var/lib/letsencrypt/live/{{website["host"]}}/privkey.pem
+            - {{ CERT_PATH }}/chain.pem
+            - {{ CERT_PATH }}/fullchain.pem
+            - {{ CERT_PATH }}/privkey.pem
+            - {{ CERT_PATH }}/cert.pem
         - require:
             - {{website["fullhost"]}}-letsencrypt-config
             - {{website["fullhost"]}}-website-conf
