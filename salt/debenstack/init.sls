@@ -11,7 +11,7 @@ debenstack-dependencies:
 
 debenstack-dependencies-upgraded:
     cmd.run:
-        - name: python -m pip install --upgrade build
+        - name: python3 -m pip install --upgrade build
         - require:
             - sls: git
             - debenstack-dependencies
