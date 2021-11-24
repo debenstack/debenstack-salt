@@ -8,6 +8,7 @@ debenstack-dependencies:
         - pkgs:
             - curl
             - python3-pip
+            - python3-venv
 
 debenstack-dependencies-upgraded:
     cmd.run:
