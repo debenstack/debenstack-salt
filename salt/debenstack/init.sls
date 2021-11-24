@@ -45,7 +45,7 @@ debenstack-lib-compiled:
 
 debenstack-lib-installed:
     cmd.run:
-        - name: python3 ./setup.py install
+        - name: python3 -m pip install ./dist/debenstacklib-0.0.1-py3-none-any.whl
         - cwd: /repos/debenstack-lib
         - require:
             - sls: git
