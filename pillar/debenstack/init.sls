@@ -11,7 +11,6 @@ debenstack:
             - wiki
             - personalblog
             - techblog
-            - lychee
             - profile
             - traccar
             - photoblog
@@ -46,14 +45,6 @@ debenstack:
             restoremethod: local
             serialiser: TechBlogSerialiser
             defaults: techblog
-        lychee:
-            database: lychee_photos
-            username: lychee_user
-            backups: lychee
-            generated: lychee
-            restoremethod: local
-            serialiser: LycheeSerialiser
-            defaults: lychee
         photoblog:
             database: ghost_photoblog
             username: ghost_photoblog_user
