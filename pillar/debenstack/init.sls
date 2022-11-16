@@ -14,6 +14,7 @@ debenstack:
             - lychee
             - profile
             - traccar
+            - photoblog
         maintenance: maintenance
     subconfig:
         maintenance:
@@ -53,6 +54,14 @@ debenstack:
             restoremethod: local
             serialiser: LycheeSerialiser
             defaults: lychee
+        photoblog:
+            database: ghost_photoblog
+            username: ghost_photoblog_user
+            backups: photoblog
+            generated: photoblog
+            restoremethod: local
+            serialiser: PhotoBlogSerialiser
+            defaults: photoblog
         profile:
             database: profile_website
             username: profile_user
