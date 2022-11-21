@@ -4,6 +4,7 @@ include:
   - git
   - docker
   - debenstack
+  - utils
 
 uptodate:
   pkg.uptodate:
