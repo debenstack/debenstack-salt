@@ -15,6 +15,10 @@ websites:
       fullhost: www.wiki.bensoer.com
       port: 443
       forward: http://127.0.0.1:3000
+    - host: mac.projectterris.com
+      fullhost: www.mac.projectterris.com
+      port: 443
+      forward: http://127.0.0.1:6000
     - host: themountainswontrememberme.com
       fullhost: www.themountainswontrememberme.com
       port: 443

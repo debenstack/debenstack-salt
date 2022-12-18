@@ -29,6 +29,14 @@ debenstack:
             restoremethod: docker
             serialiser: WikiSerialiser
             defaults: wiki
+        adventurewiki:
+            database: adventurewiki
+            username: adventurewiki_user
+            backups: adventurewiki
+            generated: adventurewiki
+            restoremethod: local
+            serialiser: AdventureWikiSerialiser
+            defaults: adventurewiki
         personalblog:
             database: ghost_personalblog
             username: ghost_pb_user
