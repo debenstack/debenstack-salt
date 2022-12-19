@@ -27,8 +27,8 @@ debenstack:
             username: mediawiki_user
             backups: wiki
             generated: wiki
-            #restoremethod: docker
-            restoremethod: local
+            restoremethod: docker
+            #restoremethod: local
             serialiser: WikiSerialiser
             defaults: wiki
         adventurewiki:
