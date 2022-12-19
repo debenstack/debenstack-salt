@@ -14,6 +14,7 @@ debenstack:
             - profile
             - traccar
             - photoblog
+            - adventurewiki
         maintenance: maintenance
     subconfig:
         maintenance:
@@ -26,7 +27,8 @@ debenstack:
             username: mediawiki_user
             backups: wiki
             generated: wiki
-            restoremethod: docker
+            #restoremethod: docker
+            restoremethod: local
             serialiser: WikiSerialiser
             defaults: wiki
         adventurewiki:
