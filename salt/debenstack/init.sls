@@ -9,6 +9,8 @@ debenstack-dependencies:
             - curl
             - python3-pip
             - python3-venv
+            - libpq-dev
+            - python3-dev
 
 debenstack-dependencies-upgraded:
     cmd.run:
@@ -46,7 +48,7 @@ debenstack-lib-compiled:
 
 debenstack-lib-installed:
     cmd.run:
-        - name: python3 -m pip install ./dist/debenstacklib-0.0.1-py3-none-any.whl
+        - name: python3 -m pip install ./dist/debenstacklib-0.2.0-py3-none-any.whl
         - cwd: /repos/debenstack-lib
         - require:
             - sls: git
