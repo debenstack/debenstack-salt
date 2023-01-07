@@ -15,8 +15,8 @@ websites:
       fullhost: www.wiki.bensoer.com
       port: 443
       forward: http://127.0.0.1:3000
-    - host: mac.projectterris.com
-      fullhost: www.mac.projectterris.com
+    - host: wiki.mountainadventurehouse.com
+      fullhost: www.wiki.mountainadventurehouse.com
       port: 443
       forward: http://127.0.0.1:6000
     - host: themountainswontrememberme.com
