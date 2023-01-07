@@ -24,6 +24,7 @@ debenstack:
             defaults: maintenance
         wiki:
             database: mediawiki
+            dbtype: mysql
             username: mediawiki_user
             backups: wiki
             generated: wiki
@@ -33,6 +34,7 @@ debenstack:
             defaults: wiki
         adventurewiki:
             database: adventurewiki
+            dbtype: postgres
             username: adventurewiki_user
             backups: adventurewiki
             generated: adventurewiki
@@ -41,6 +43,7 @@ debenstack:
             defaults: adventurewiki
         personalblog:
             database: ghost_personalblog
+            dbtype: mysql
             username: ghost_pb_user
             backups: personalblog
             generated: personalblog
@@ -49,6 +52,7 @@ debenstack:
             defaults: personalblog
         techblog:
             database: ghost_techblog
+            dbtype: mysql
             username: ghost_tb_user
             backups: techblog
             generated: techblog
@@ -57,6 +61,7 @@ debenstack:
             defaults: techblog
         photoblog:
             database: ghost_photoblog
+            dbtype: mysql
             username: ghost_photoblog_user
             backups: photoblog
             generated: photoblog
@@ -65,6 +70,7 @@ debenstack:
             defaults: photoblog
         profile:
             database: profile_website
+            dbtype: mysql
             username: profile_user
             backups: profile
             generated: profile
@@ -73,6 +79,7 @@ debenstack:
             defaults: profile
         traccar:
             database: traccar
+            dbtype: mysql
             username: traccar_user
             backups: traccar
             generated: traccar
