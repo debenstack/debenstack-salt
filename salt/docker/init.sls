@@ -1,3 +1,6 @@
+{% set GITHUB_TOKEN = grains['githubtoken'] %}
+{% set GITHUB_USERNAME = grains['githubusername'] %}
+
 docker-dependencies:
     pkg.installed:
         - pkgs:
@@ -69,3 +72,10 @@ docker-config:
             - install-loki-plugin
         - watch_in:
             - docker-running
+
+login-ghcr-docker-registry:
+    cmd.run:
+        - name: "echo {{ GITHUB_TOKEN }} | docker login ghcr.io -u {{ GITHUB_USERNAME }} --password-stdin"
+        - require:
+            - docker-running
+    
