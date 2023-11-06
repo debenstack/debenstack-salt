@@ -34,7 +34,7 @@ debenstack:
             defaults: wiki
         adventurewiki:
             database: adventurewiki
-            dbtype: postgres
+            dbtype: mysql
             username: adventurewiki_user
             backups: adventurewiki
             generated: adventurewiki
