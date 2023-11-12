@@ -39,6 +39,18 @@ update-ssh-config:
             - create-github-ssh-key-pair
             - ssh_config-directory
 
+create-global-known-hosts-file:
+    cmd.run:
+        - name: touch /etc/ssh/ssh_known_hosts
+        - create: /etc/ssh/ssh_known_hosts
+
+add-github-to-known-hosts-file:
+    cmd.run:
+        - name: ssh-keyscan github.com >> /etc/ssh/ssh_known_hosts
+        - unless: grep 'github.com' /etc/ssh/ssh_known_hosts
+        - require:
+            - create-global-known-hosts-file
+
 repos-directory:
   file.directory:
     - name: /repos
@@ -62,6 +74,7 @@ debenstack-cloned:
             - git-installed
             - add-key-to-ssh-agent
             - update-ssh-config
+            - add-github-to-known-hosts-file
 
 
 debenstack-lib-cloned:
@@ -75,6 +88,7 @@ debenstack-lib-cloned:
             - git-installed
             - add-key-to-ssh-agent
             - update-ssh-config
+            - add-github-to-known-hosts-file
 
 debenstack-backups-cloned:
     git.cloned:
@@ -87,4 +101,5 @@ debenstack-backups-cloned:
             - git-installed
             - add-key-to-ssh-agent
             - update-ssh-config
+            - add-github-to-known-hosts-file
 
