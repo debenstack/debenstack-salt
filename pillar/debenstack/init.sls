@@ -34,11 +34,11 @@ debenstack:
             defaults: wiki
         adventurewiki:
             database: adventurewiki
-            dbtype: mysql
+            dbtype: mysql # needs to switch to postgres for optimisations. but need backups in postgres as well
             username: adventurewiki_user
             backups: adventurewiki
             generated: adventurewiki
-            restoremethod: local
+            restoremethod: docker
             serialiser: AdventureWikiSerialiser
             defaults: adventurewiki
         personalblog:
