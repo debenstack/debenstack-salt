@@ -1,8 +1,10 @@
 {% set GITHUB_RSA_FILE = pillar['git']['rsa_folder'] + '/' + pillar['git']['rsa_file_name'] %}
 
-cat >> /root/.ssh/ssh_config << EOL
-Host github.com
-    HostName github.com
-    IdentityFile {{ GITHUB_RSA_FILE }}
-EOL
-chmod 600 /root/.ssh/ssh_config
+if grep -q 'Host github.com' /etc/ssh/ssh_config
+    cat >> /etc/ssh/ssh_config << EOL
+    Host github.com
+        HostName github.com
+        IdentityFile {{ GITHUB_RSA_FILE }}
+    EOL
+fi
+

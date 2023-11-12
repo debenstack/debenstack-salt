@@ -24,9 +24,20 @@ upload-github-ssh-key-to-github:
 
 add-key-to-ssh-agent:
     cmd.run:
-        - name: eval `ssh-agent -s` && ssh-add -l |grep -q `ssh-keygen -lf {{ GITHUB_RSA_FILE }} | awk '{print $2}'` || ssh-add {{ GITHUB_RSA_FILE }}
+        - name: eval `ssh-agent -s` && ssh-add -l {{ GITHUB_RSA_FILE }}
+        - require: 
+            - create-github-ssh-key-pair
+
+# https://stackoverflow.com/questions/7875540/how-to-write-multiple-line-string-using-bash-with-variables
+# https://superuser.com/questions/232373/how-to-tell-git-which-private-key-to-use
+update-ssh-config:
+    cmd.script:
+        - name: update_ssh_config.jinja
+        - source: salt://git/files/update_ssh_config.jinja
+        - template: jinja
         - require:
             - create-github-ssh-key-pair
+            - ssh_config-directory
 
 repos-directory:
   file.directory:
@@ -50,6 +61,7 @@ debenstack-cloned:
             - repos-directory
             - git-installed
             - add-key-to-ssh-agent
+            - update-ssh-config
 
 
 debenstack-lib-cloned:
@@ -62,6 +74,7 @@ debenstack-lib-cloned:
             - repos-directory
             - git-installed
             - add-key-to-ssh-agent
+            - update-ssh-config
 
 debenstack-backups-cloned:
     git.cloned:
@@ -73,4 +86,5 @@ debenstack-backups-cloned:
             - repos-directory
             - git-installed
             - add-key-to-ssh-agent
+            - update-ssh-config
 
