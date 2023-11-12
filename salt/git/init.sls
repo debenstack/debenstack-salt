@@ -1,19 +1,17 @@
 {% set GITHUB_TOKEN = grains['githubtoken'] %}
 {% set GITHUB_USERNAME = grains['githubusername'] %}
-
-{% set GITHUB_RSA_FILE = pillar['git.rsa_folder'] + '/' + pillar['git.rsa_file_name'] %}
-
-
+{% set GITHUB_RSA_FILE = pillar['git']['rsa_folder'] + '/' + pillar['git']['rsa_file_name'] %}
 
 git-installed:
     pkg.installed:
         - pkgs:
             - git
+            - jq
 
 create-github-ssh-key-pair:
     cmd.run:
         - name: ssh-keygen -t rsa -b 4096 -C ben@soernet.ca -f "{{ GITHUB_RSA_FILE }}" -N "" && chmod 400 {{ GITHUB_RSA_FILE }}*
-        - unless: test -f /etc/ssh/github_rsa
+        - unless: test -f {{ GITHUB_RSA_FILE }}
 
 # https://docs.github.com/en/rest/users/keys?apiVersion=2022-11-28
 upload-github-ssh-key-to-github:
@@ -24,14 +22,11 @@ upload-github-ssh-key-to-github:
         - require:
             - create-github-ssh-key-pair
 
-# https://stackoverflow.com/questions/7875540/how-to-write-multiple-line-string-using-bash-with-variables
-# https://superuser.com/questions/232373/how-to-tell-git-which-private-key-to-use
-update-ssh-config:
-    cmd.script:
-        - name: salt://git/files/update_ssh_config.sh
+add-key-to-ssh-agent:
+    cmd.run:
+        - name: eval `ssh-agent -s` && ssh-add -l |grep -q `ssh-keygen -lf {{ GITHUB_RSA_FILE }} | awk '{print $2}'` || ssh-add {{ GITHUB_RSA_FILE }}
         - require:
             - create-github-ssh-key-pair
-
 
 repos-directory:
   file.directory:
@@ -54,7 +49,8 @@ debenstack-cloned:
         - require:
             - repos-directory
             - git-installed
-            - update-ssh-config
+            - add-key-to-ssh-agent
+
 
 debenstack-lib-cloned:
     git.cloned:
@@ -65,7 +61,7 @@ debenstack-lib-cloned:
         - require:
             - repos-directory
             - git-installed
-            - update-ssh-config
+            - add-key-to-ssh-agent
 
 debenstack-backups-cloned:
     git.cloned:
@@ -76,5 +72,5 @@ debenstack-backups-cloned:
         - require:
             - repos-directory
             - git-installed
-            - update-ssh-config
+            - add-key-to-ssh-agent
 

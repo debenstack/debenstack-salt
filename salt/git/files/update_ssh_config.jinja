@@ -1,4 +1,4 @@
-{% set GITHUB_RSA_FILE = pillar['git.rsa_folder'] + '/' + pillar['git.rsa_file_name'] %}
+{% set GITHUB_RSA_FILE = pillar['git']['rsa_folder'] + '/' + pillar['git']['rsa_file_name'] %}
 
 cat >> /root/.ssh/ssh_config << EOL
 Host github.com

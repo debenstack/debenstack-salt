@@ -1,11 +1,24 @@
-{% set GITHUB_PUB_RSA_FILE = pillar['git.rsa_folder'] + '/' + pillar['git.rsa_file_name'] + '.pub' %}
+{% set GITHUB_PUB_RSA_FILE = pillar['git']['rsa_folder'] + '/' + pillar['git']['rsa_file_name'] + '.pub' %}
 {% set PUB_KEY = salt['cmd.run']('cat ' + GITHUB_PUB_RSA_FILE) %}
 {% set GITHUB_TOKEN = grains['githubtoken'] %}
+{% set GITHUB_KEY_NAME = pillar['git']['githubkeyname'] %}
 
+KEY_DATA=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer {{ GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/user/keys )
+KEY_EXISTS=$(echo $KEY_DATA | jq 'map(select(.title == "{{ GITHUB_KEY_NAME }}")) | length')
+
+if [[ $KEY_EXISTS == 1 ]]; then
+  echo "Existing Key Found. Deleting"
+  KEY_ID=$(echo $KEY_DATA | jq -r 'map(select(.title == "{{ GITHUB_KEY_NAME }}")) | .[].id')
+  echo "Deleting Key Of ID $KEY_ID"
+  curl -L -X DELETE -H "Accept: application/vnd.github+json" -H "Authorization: Bearer {{ GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/user/keys/$KEY_ID
+
+fi
+
+echo "Now Uploading New Key"
 curl -L \
   -X POST \
   -H "Accept: application/vnd.github+json" \
   -H "Authorization: Bearer {{ GITHUB_TOKEN }}" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
   https://api.github.com/user/keys \
-  -d '{"title":"debenstack-gitub-key","key":"{{ PUB_KEY }}"}'
+  -d '{"title":"{{ GITHUB_KEY_NAME }}","key":"{{ PUB_KEY }}"}'
