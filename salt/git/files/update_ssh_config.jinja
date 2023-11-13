@@ -1,11 +1,13 @@
 {% set GITHUB_RSA_FILE = pillar['git']['rsa_folder'] + '/' + pillar['git']['rsa_file_name'] %}
 
-if grep -q 'Host github.com' /etc/ssh/ssh_config; then
+if ! grep -q 'Host github.com' /etc/ssh/ssh_config; then
     echo "Host github.com entry not found in /etc/ssh/ssh_config. Appending."
     cat >> /etc/ssh/ssh_config << EOL
-    Host github.com
-        HostName github.com
-        IdentityFile {{ GITHUB_RSA_FILE }}
-    EOL
-fi
+Host github.com
+    HostName github.com
+    IdentityFile {{ GITHUB_RSA_FILE }}
+EOL
 
+else
+    echo "Host github.com was found in /etc/ssh/ssh_config. Skipping"
+fi
