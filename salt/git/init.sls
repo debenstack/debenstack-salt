@@ -24,7 +24,7 @@ upload-github-ssh-key-to-github:
 
 add-key-to-ssh-agent:
     cmd.run:
-        - name: eval `ssh-agent -s` && ssh-add -l {{ GITHUB_RSA_FILE }}
+        - name: eval `ssh-agent -s` && ssh-add {{ GITHUB_RSA_FILE }}
         - require: 
             - create-github-ssh-key-pair
 
@@ -37,7 +37,6 @@ update-ssh-config:
         - template: jinja
         - require:
             - create-github-ssh-key-pair
-            - ssh_config-directory
 
 create-global-known-hosts-file:
     cmd.run:
